@@ -1,0 +1,810 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NCBI Sequence Downloader Report</title>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Segoe UI', Arial; background: #f4f7f9; padding: 30px; }
+            h1 { color: #2c3e50; border-left: 5px solid #3498db; padding-left: 15px; margin-bottom: 10px; }
+            .subtitle { color: #7f8c8d; margin-bottom: 30px; }
+            .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+            .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); text-align: center; border-top: 4px solid #3498db; }
+            .card h2 { font-size: 38px; color: #3498db; margin: 0; }
+            .card p { color: #7f8c8d; font-weight: 600; margin-top: 8px; text-transform: uppercase; font-size: 13px; }
+            .section { background: white; padding: 30px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+            .section h3 { color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+            .plot img { max-width: 100%; height: auto; border-radius: 8px; }
+            .download-btn { display: inline-block; padding: 12px 25px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 10px; margin-bottom: 15px; }
+            .download-btn:hover { background: #2980b9; }
+            .mini-table { width: 50%; border-collapse: collapse; }
+            .mini-table th { background: #3498db; color: white; padding: 12px; text-align: left; }
+            .mini-table td { padding: 10px; border-bottom: 1px solid #ecf0f1; }
+            table.dataTable { width: 100% !important; }
+        </style>
+    </head>
+    <body>
+        <h1>NCBI Sequence Downloader - Metadata Report</h1>
+        <p class="subtitle">Generated: 2026-05-19 02:21:48</p>
+        
+        <div class="summary">
+            <div class="card"><h2>100</h2><p>Total Sequences</p></div>
+            <div class="card"><h2>3158791</h2><p>Avg Length (bp)</p></div>
+            <div class="card"><h2>26</h2><p>Unique Organisms</p></div>
+            <div class="card"><h2>100</h2><p>Files Processed</p></div>
+        </div>
+        
+        <div class="section">
+            <h3>Top 5 Organisms</h3>
+            <table border="1" class="dataframe mini-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Organism</th>
+      <th>Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Escherichia coli</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <td>Escherichia coli K-12</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>Escherichia coli str. K-12 substr. MG1655</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>Aeromonas hydrophila</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>Escherichia coli O145:H28</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+        
+        <div class="section">
+            <h3>Sequence Length Distribution</h3>
+            <div class="plot"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAADxHswlAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjksIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvJkbTWQAAAAlwSFlzAAAPYQAAD2EBqD+naQAARnhJREFUeJzt3Qm8VWW9P/6HeXDAAGUQUJzA4SeWcxoXRzTz6s1bDplIZmVqqXkrywmz9JrTrchu19TqBnY155sjJmpqJYpTQGIUDqBCCcokwv6/vqu7z3+fzQGBs885zznn/X69Fps9rmev/ex11mc/w+pQKpVKCQAAAGhRHVt29QAAAEAQ0AEAACADAjoAAABkQEAHAACADAjoAAAAkAEBHQAAADIgoAMAAEAGBHQAAADIgIAOAAAAGRDQAQAAIAMCOgAAAGRAQAcAAIAMCOgAAACQAQEdAAAAMiCgA9TAO++8ky6//PI0cuTI1Ldv39SlS5fUq1evtOWWW6Y99tgjjR07Nl155ZVp9uzZtncb1aFDh3rLX/7yl5YuUjYuvPDCetvmhhtuqOnrjxo1apXtH9/BjTbaKA0ePDjttdde6aSTTkq33HJLeu+991qsnLVUWc7Yz1SKclfeH++rNb4PgPZIQAdopBdffDHttNNO6d/+7d/SI488kubPn1+EgIULF6a//vWv6Q9/+ENxwPyVr3wlPfzww7Y3bUZ1MM7pR4n4DsYPZ6+88kr63e9+l6677rp01FFHpaFDh6Z77rmn2crx0EMP1dtGJ554Ymrr2uN7BqiVzjV7JYB2qFQqpWOOOaYI4mXRgj5ixIi04YYbFmH9j3/8Y/rb3/7WouWE9mS33XZLW2yxRRHQZ86cmV566aW6+yKwf/SjH03f//7306mnnlrveTvssEMR4stybtGtLOdmm22WWqu28j4AakVAB2iEqVOnpqeeeqru+hFHHJFuvvnm1Llz51Ue9z//8z9FeAeaVgTvylbb+P594QtfKFrSyz+sfelLXyp6vvzTP/1T3eM++clPFktrEPuZtqCtvA+AWtHFHaAR/vSnP9W7Hgf71eE87LLLLuk73/lOOuSQQxp8nSVLlqQf/ehHafTo0al///6pa9euxRj2aAkcN25c0RK/Oi+88EL6xCc+kTbddNPUvXv3NHz48OI58Zpr6oK8Nt1QowWx8jENeeutt9J3v/vd4r2Xx9/37t077bvvvumqq65KixYtWuU5UY7K141yLlu2rBjHH70PevToUbz/2F5PPPHEat97vPY111yTDj300DRw4MDUrVu3tPHGG6dtttkmHXfccem+++5rsOvzhAkT0j//8z+nQYMGFdssxir/v//3/4phCtHC2tzWt0wNfT6/+tWv0n777Vdsv9iOu+66a/r5z3++2nVPmzYtHX300etUf8q3T548ud5rRffxte3y/vLLL6eTTz65eL9R34cMGVKE5gULFqRai+/fb37zmyKQl61cuTJ97WtfW6cx6PE9jMfsueeeRR2Puh71bauttkoHHHBA8XrlYSzl71d8FpV++tOfrvZ7Vz0e+913302XXXZZ2nnnndMGG2xQ7zu4rmO333zzzXT66acXPQviexJj8+N63F4tylT5+vFeKq1u31GL97y6uvKNb3wj7b777ukDH/hAsd379OmT9tlnn/Ttb387zZs3r8HnVb92fObXXnttMSdB9HCK5SMf+Ui6++6733f7ATSbEgDr7ZZbbinFrrS8bLrppqXvf//7pRdffHGtX+OPf/xjabvttqv3OtVL//79S4899tgqz73vvvtKPXr0aPA5u+22W+mDH/xgvdtmzZpV99zf/OY39e4bM2bMKq+/xRZb1HtMtUceeaQo25rKvu2225ZmzJhR73lRjsrH7LTTTqUPfehDDT6/W7dupSeeeGKVdf/+979fpXzVS/V7eu2110p77LHHGp+z0UYblW6//fbSuqp+ncptvSaNKVP1+z/hhBNW+xpXXXXVKs+POtCzZ891rj//9E//tMbyVj/+ggsuqHf72LFjSxtvvHGDz9l9991L77777jpt++ryXH/99Q0+7tZbb11lfS+99FLd/dXlrHydN998833rWyxHHXVU3bZdm21UWUcrbx8wYEDpgAMOWOXxDT02ylUpyl15/6c+9anSwIEDG1z/kCFDVqmrUabKx8R7qa43Db2Hxr7n6vcRfvGLX5Q22GCDNb5e3759Sw888MAqz618TL9+/UoHH3xwg8/v0KFDsS8HyIEu7gCNEC0x0WJenhm63EoVNtlkk/ShD32oaKGJcZbRGlrt73//ezr44IPrtZBG6++wYcPS66+/np588snitrlz56bDDz88Pfvss0VLcYhx7dFKHC2dZbHOaHV/9dVX657bVGJc72GHHVZMhlcWLZTRUjVr1qyiZb88iV60cD/33HOpZ8+eDb7W888/X1zGc7fddtuiK3L5daNl/bzzzqvXGh4ts9HbILZfWXwOsY2jRTbef3RrrrR8+fJi7HHl7fHYaJ2MVtvHH3+8aGF7++23ixblaLmP1vymVOsy/exnPytadqPVPFrGK+tVtPx+7nOfq/sMoudDzJ+wePHiusdEa3CcdSBaLNdUf8q9JaIFvbL1Mj7nys84Wn0bcv3116dOnToVLdGh3PU8xKSKN910U1G3ay2+a7HeFStW1N326KOPFi3g7+e//uu/6s01EXU16nvUz6hvUecrv4vRIyG+97FPqJwcMlqw4ztaFq3CDZkzZ06xxDaM/Uj0bohtsz5+8YtfpI4dOxafbbxObO8od4gzSxx//PHFdmisxr7natEif8IJJ9T7vKKXxnbbbVfsT1577bXitqiDMbxoypQpxb6zIbE/jX3IgAEDis/t6aefrqu7keWj98O//Mu/rPd7B6iZlv6FAKC1O//889eq1ejwww8vvfHGG/Wee+6559Z7zKWXXlrv/gkTJtS7/7TTTqu777LLLqt33zbbbFOaM2dO3f1f//rXV9uiWYsW9OOPP77efRMnTqx3/3e+8516919++eWrbUGP5TOf+UzpvffeK+6fPn16qWvXrnX3xf8rW1WrW4qHDRtWeuGFF+qt/+WXXy7dcccdddevvfbaes/54he/WFqxYkXd/b/97W+LlrTy/R/72MdK62JN23p1Glum6s8neiHMnz+/uO/tt98u7bjjjvXunzx5ct1zr7jiinr3DR06tPTKK6/U3X/WWWe973uqbrle3Xuubpnu1KlTvRbPhlrYm6IFPURLauVj43u0unJUvs7JJ59cd3v0eCnX1bJly5aVJk2aVLr55pvr3b4237Oy6u29yy671PtMli5dul4t6LHceeeddfc/9dRTq/S8qawb69uC3tj3XP0+9tprr3r3n3LKKXXfjyVLlpQOO+ywevcfc8wxa9yehxxySGnx4sXFfXPnzi1tttlm9e7/61//utpyAjQXLegAjRTjdaM1LS4rW9iq3XnnnUUrz29/+9u6saS33nprvcdEi+m//uu/1l2vbDkqv0bMPh0eeOCBevedffbZxfj1svPPPz+NHz++aH2ttWjVveOOO+quxxjimOypcsKn6vVG2eNUcw2JVr0Yfx6t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j6VTTjklnXPOOalUKhW3xynXRo8eXYT0eAwAAADQhAE9bLHFFunXv/51+vvf/55mzpxZhPRtt902feADH6jFywMAAECbV5OAXhaBfPfdd6/lSwIAAEC70OhJ4gAAAIDGE9ABAAAgAwI6AAAAZEBABwAAgAwI6AAAAJABAR0AAAAyIKADAABABgR0AAAAyICADgAAABkQ0AEAACADAjoAAABkQEAHAACADAjoAAAAkAEBHQAAADIgoAMAAEAGBHQAAADIgIAOAAAAGRDQAQAAIAMCOgAAAGRAQAcAAIAMCOgAAACQAQEdAAAAMiCgAwAAQAYEdAAAAMiAgA4AAAAZENABAAAgAwI6AAAAZEBABwAAgAwI6AAAAJABAR0AAAAyIKADAABABgR0AAAAyICADgAAABkQ0AEAACADAjoAAABkQEAHAACADAjoAAAAkAEBHQAAADIgoAMAAEAGBHQAAADIgIAOAAAAGRDQAQAAIAMCOgAAAGRAQAcAAIAMCOgAAACQAQEdAAAAMiCgAwAAQAYEdAAAAMiAgA4AAAAZENABAAAgAwI6AAAAZEBABwAAgAwI6AAAAJABAR0AAAAyIKADAABABgR0AAAAyICADgAAABkQ0AEAACADAjoAAABkILuA/vDDD6fDDz88DRw4MHXo0CHddttt9e4vlUrp/PPPTwMGDEg9evRIBx54YHrxxRdbrLwAAADQJgP6okWL0ogRI9L48eMbvP+yyy5L3/ve99KPfvSj9Lvf/S5tsMEGafTo0Wnp0qXNXlYAAAColc4pM4ceemixNCRaz6+++up07rnnpiOOOKK47Wc/+1nq169f0dJ+zDHHNHNpAQAAoI22oK/JrFmz0ty5c4tu7WW9evVKe+65Z3r88cdbtGwAAADQplrQ1yTCeYgW80pxvXxfQ5YtW1YsZQsXLiwuly9fXiy5WrlyZXHZrWNKnTqsaPL1vdcxFeP6Y705bxdqo/wZ+6ypNXWLpqR+oX61HXHMGceecazbtRmOdbt17tCs66s+trb/ah+WNzJHdShFv/FMxSRxt956azryyCOL64899ljaZ5990muvvVZMElf2yU9+snjsL3/5ywZf58ILL0zjxo1b5fYJEyaknj17NuE7AAAAoL1YvHhxOu6449KCBQvSxhtv3LZb0Pv3719cvv766/UCelzfZZddVvu8c845J511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AID2EdDffffdNGXKlHTggQfW3daxY8fi+uOPP96iZQMAAID11Tm1MvPmzUsrVqxI/fr1q3d7XJ8+fXqDz1m2bFmxlC1YsKC4/Nvf/paWL1+ecrVw4cK0ePHi9N6cv6QVyxY3+free2NWMaY/fgCJdTeH+HFl5cqVzbIu66svtnvUr0ceeaT4HGzPlq0vL774YvH9e+/VF9Ky5U3/fU9vzmqy9ZU6prR4o5SW/fmp9O7Kpl9fe9ufNXddyW1b1mLftS7rawrWl+/2fL/61Zb21dbX/Nuzwb+PrXh/3VJ/jxYuXJjmz5+fcvX2228Xl6VSab2e36G0vs9sIa+99lrafPPN02OPPZb23nvvutu/+tWvpsmTJ6ff/e53qzznwgsvTOPGjWvmkgIAANAevfzyy2nQoEFtvwW9b9++qVOnTun111+vd3tc79+/f4PPOeecc4pJ5Sp/HY3W8z59+qQOHTqkXMWvQ4MHDy4+3I033rili0Mbo36hbtEa2XehftFa2X+1D6VSqWhFHzhw4Ho9v9UF9K5du6Zdd901TZo0KR155JF1gTuun3baaQ0+p1u3bsVSaZNNNkmtRYRzAR31i9bGvgv1i9bK/gv1i8bo1avXej+31QX0EK3hY8aMSbvttlvaY4890tVXX50WLVpUzOoOAAAArVGrDOhHH310evPNN9P555+f5s6dm3bZZZd0zz33rDJxHAAAALQWrTKgh+jOvrou7W1FdMu/4IILVumeD+oXObPvQv2itbL/Qv2ipbW6WdwBAACgLarNCUQBAACARhHQAQAAIAMCOgAAAGRAQM/U+PHj05Zbbpm6d++e9txzz/T73/++pYtEG/Hwww+nww8/PA0cODB16NAh3XbbbS1dJNqISy65JO2+++5po402Sptttlk68sgj04wZM1q6WLQR11xzTdp5553rzk+99957p7vvvruli0UbdOmllxZ/H88444yWLgptxIUXXljUqcpl+PDhLV0sMiWgZ+iXv/xlca73mMH9qaeeSiNGjEijR49Ob7zxRksXjTZg0aJFRZ2KH4GgliZPnpxOPfXU9MQTT6T7778/LV++PB188MFFnYPGGjRoUBGcpkyZkp588sm0//77pyOOOCK98MILNi4184c//CH953/+Z/FjENTSjjvumObMmVO3PProozYwDTKLe4aixTxaoX7wgx8U11euXJkGDx6cTj/99PT1r3+9pYtHGxK/4N56661FSyfU2ptvvlm0pEdwHzlypA1MzfXu3Tt997vfTSeddJKtS6O988476UMf+lD64Q9/mC6++OK0yy67pKuvvtqWpSYt6NFjcerUqbYm70sLembefffdonXgwAMPrLutY8eOxfXHH3+8RcsGsC4WLFhQF6KgllasWJFuvPHGondGdHWHWogeQIcddli9YzColRdffLEYXrjVVlulT33qU2n27Nk2Lg3q3PDNtJR58+YVBx79+vWrd3tcnz59eouVC2BdRM+fGL+5zz77pJ122snGoyaee+65IpAvXbo0bbjhhkUPoB122MHWpdHiB58YVhhd3KHWonfsDTfckIYNG1Z0bx83blz6yEc+kp5//vli3haoJKAD0CQtUXHgYYwdtRQHt9FFNHpn3HzzzWnMmDHFEAohncZ4+eWX05e//OVi7oyYnBdq7dBDD637f8xvEIF9iy22SP/zP/9jiA6rENAz07dv39SpU6f0+uuv17s9rvfv37/FygWwtk477bR01113FWcMiIm9oFa6du2attlmm+L/u+66a9Ha+R//8R/FpF6wvmJoYUzEG+PPy6I3Y+zDYj6gZcuWFcdmUCubbLJJ2m677dLMmTNtVFZhDHqGBx9x0DFp0qR6XUXjunF2QM5KpVIRzqPb8YMPPpiGDh3a0kWijYu/jxGeoDEOOOCAYvhE9M4oL7vttlsxTjj+L5zTFBMSvvTSS2nAgAE2LqvQgp6hOMVadNuLPw577LFHMYNoTIQzduzYli4abeSPQuUvtrNmzSoOQGIiryFDhrRo2Wj93donTJiQbr/99mJM3dy5c4vbe/XqlXr06NHSxaOVO+ecc4puorGfevvtt4u69tBDD6V77723pYtGKxf7q+q5MjbYYIPUp08fc2hQE2effXY6/PDDi27tr732WnEq5fjh59hjj7WFWYWAnqGjjz66OD3R+eefXxzgxmk+7rnnnlUmjoP1EecP3m+//er9IBTiR6GYwATW1zXXXFNcjho1qt7t119/fTrxxBNtWBoluiCfcMIJxQRL8aNPjOOMcH7QQQfZskDWXnnllSKMz58/P2266aZp3333TU888UTxf6jmPOgAAACQAWPQAQAAIAMCOgAAAGRAQAcAAIAMCOgAAACQAQEdAAAAMiCgAwAAQAYEdAAAAMiAgA4AAAAZENABgDU68cQT05FHHrleW2nkyJFpwoQJddc7dOiQbrvttkZt8T/+8Y9p0KBBadGiRY16HQDan4cffjgdfvjhaeDAgev9N6lUKqXLL788bbfddqlbt25p8803T9/+9rdrUj4BHQBaeQiulb/85S/FwcrUqVNr8np33HFHev3119MxxxyTammHHXZIe+21V7ryyitr+roAtH2LFi1KI0aMSOPHj1/v1/jyl7+crr322iKkT58+vfh7t8cee9SkfJ1r8ioAAFW+973vpbFjx6aOHWvfHhCve/LJJ6dzzjknde7scAaAtXPooYcWy+osW7YsffOb30wTJ05Mb731Vtppp53Sv//7v6dRo0YV90+bNi1dc8016fnnn0/Dhg0rbhs6dGiqFS3oANAKxIFAHFBsuOGGqV+/funTn/50mjdvXt39ceDwpS99KX31q19NvXv3Tv37908XXnhhvdeIX/n33Xff1L1796IV+oEHHqjXva98gPHBD36wuL18MFIWLQUDBgxIffr0Saeeempavnz5asv75ptvpgcffLDoRlhtzpw5xXvp0aNH2mqrrdLNN9+8Siv+jTfemD784Q8XZY2Do8mTJ9d7jYMOOij97W9/W+V2AGiM0047LT3++OPF36Fnn302feITn0iHHHJIevHFF4v777zzzuJv11133VX83dxyyy3TZz/72eJvUi0I6ACQufgFf//99y+C85NPPpnuueeeouv4Jz/5yXqP++lPf5o22GCD9Lvf/S5ddtll6aKLLkr3339/cd+KFSuKLvQ9e/Ys7v/xj39ctBBU+v3vf19cRnCPEH3LLbfU3feb3/wmvfTSS8VlrOeGG24oltV59NFHi3Vtv/32q9x33nnnpaOOOio988wz6VOf+lTRBT5aJCr927/9W/rKV76Snn766bT33nsXQX/+/Pl193ft2jXtsssu6ZFHHlnn7QkADZk9e3a6/vrr00033ZQ+8pGPpK233jqdffbZxY/bcXv485//nP76178Wj/nZz35W/C2cMmVK+td//ddUC/qEAUDmfvCDHxTh/Dvf+U7dbdddd10aPHhw+tOf/lRMUhN23nnndMEFFxT/33bbbYvnTZo0qWhtjqAeAfuhhx4qWtdDTGgT95VtuummxWW0kJcfU/aBD3ygeL1OnTql4cOHp8MOO6x47ehm3pA4eImW/oa6t0drRLQ2hG9961tF2b7//e+nH/7wh/VaMCLEh+hKGD9K/OQnPyl6CJTFBD+xHgCoheeee674Qbv8d7Wy23v8bQwrV64srkc4Lz8u/j7tuuuuacaMGXXd3teXgA4AmYuW5mi5ju7t1SJ0Vwb0StEd/Y033ij+HwcNEegrg/e6TGiz4447FuG88rXjQGZ1lixZUnRPb0i0iFdfr56YrvIxMcZ8t912W6WVPbrIL168eK3fAwCsyTvvvFP8rYsW8cq/eaH8Nzj+/sXfpcoQX+4tFi3wAjoAtIMDhujiHZPUVIsDhbIuXbrUuy/Gcscv/bWwrq/dt2/f9Pe//z01pRjvF90PAaAWordatKDHj9vRxb0h++yzT3rvvfeKH8jLf4OiN1vYYostGl0GY9ABIHMf+tCH0gsvvFBMRLPNNtvUW2LM+dqIX/RffvnlYux62R/+8Id6j4lx3SEOTmpxkDN37twGQ/oTTzyxyvXqseqVj4kDoWjNqH5MTJwX6wGAdfnRO3ptlXtuzZo1q/h/tH5Hq3jMjXLCCScU87DEfTE/yyWXXJL+93//t3j8gQceWPxd/sxnPlPMkxJ/nz7/+c8XQ8aqu8avDwEdADKxYMGCuoOG8hKhOmZMj9biY489tgjV8av9vffeW5xqbG3DdBw4xC/9Y8aMKWal/e1vf5vOPffcutbwsNlmmxXdxsuT0EV51lcE52hFj/VUi4l1Ygx9tDjEmPk4+Ikx55Xi/LS33nprMfN8vP8I+nEwVDnb+6uvvlocKAHA2orJVuNvVPkH3rPOOqv4//nnn19cj8ngIqDHRKXx43ZMsBp/e4cMGVLcH3OrxEzu8Tdu5MiRxZws8QNyzPpeC8agA0AmYgK36hbhk046KV177bVF0P3a176WDj744GJymuhGF6d9WdtzjMdYujidWkzOtvvuuxeniPnud79bdJ0vjxWPMXVx7vKY/T0OVKJ7X5RpfcT64geEX/ziF+ljH/tYvfvGjRtXHMh88YtfLLrox7lm47RvlS699NJiiR8poqfAHXfcURwMlcVzYlvUojshAO3HqFGjUqlUWuOQrvg7FcvqxCSlv/rVr5qkfB1KayodANBmReiPU8fMnDmzScZyRxf3mFzuqaeeWusgHS3jcV7Z6DYYp1FryLvvvlvMUj9hwoRiLCAAtBVa0AGgnYgu4zELbYTbCOVf/vKXi4DbVBOtxYzxceqZGNdXy5bueL1vfOMbwjkAbY6ADgDtxNtvv110k4+AG93FY/z2FVdc0aTrjLF7tVaeIA8A2hpd3AEAACADZnEHAACADAjoAAAAkAEBHQAAADIgoAMAAEAGBHQAAADIgIAOAAAAGRDQAQAAIAMCOgAAAGRAQAcAAIAMCOgAAACQAQEdAAAAMiCgAwAAQAYEdAAAAMiAgA4AAACp5f1/O6M8hFSBOWcAAAAASUVORK5CYII="></div>
+        </div>
+        
+        <div class="section">
+            <h3>Complete Metadata Table</h3>
+            <a href="outputs/metadata.csv" class="download-btn" download>📥 Download CSV</a>
+            <table border="1" class="dataframe display" id="seqTable">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Accession</th>
+      <th>Name</th>
+      <th>Organism</th>
+      <th>Length</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>NC_003197.2</td>
+      <td>NC_003197</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2</td>
+      <td>4857450</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhim</td>
+    </tr>
+    <tr>
+      <td>AE006468.2</td>
+      <td>AE006468</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhimurium str. LT2</td>
+      <td>4857450</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhim</td>
+    </tr>
+    <tr>
+      <td>AL513382.1</td>
+      <td>AL513382</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhi str. CT18</td>
+      <td>4809037</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhi</td>
+    </tr>
+    <tr>
+      <td>AE009952.1</td>
+      <td>AE009952</td>
+      <td>Yersinia pestis KIM10+</td>
+      <td>4600755</td>
+      <td>Yersinia pestis KIM10+, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP024842.1</td>
+      <td>CP024842</td>
+      <td>Pectobacterium versatile</td>
+      <td>4975878</td>
+      <td>Pectobacterium versatile strain 3-2 chromosome, co</td>
+    </tr>
+    <tr>
+      <td>BX936398.1</td>
+      <td>BX936398</td>
+      <td>Yersinia pseudotuberculosis IP 32953</td>
+      <td>4744671</td>
+      <td>Yersinia pseudotuberculosis IP32953 genome, comple</td>
+    </tr>
+    <tr>
+      <td>AM406670.1</td>
+      <td>AM406670</td>
+      <td>Azoarcus olearius</td>
+      <td>4376040</td>
+      <td>Azoarcus olearius strain BH72 genome assembly</td>
+    </tr>
+    <tr>
+      <td>AE005174.2</td>
+      <td>AE005174</td>
+      <td>Escherichia coli O157:H7 str. EDL933</td>
+      <td>5528445</td>
+      <td>Escherichia coli O157:H7 str. EDL933 genome</td>
+    </tr>
+    <tr>
+      <td>AM260525.1</td>
+      <td>AM260525</td>
+      <td>Bartonella tribocorum CIP 105476</td>
+      <td>2619061</td>
+      <td>Bartonella tribocorum CIP 105476 complete genome,</td>
+    </tr>
+    <tr>
+      <td>AY893111.1</td>
+      <td>AY893111</td>
+      <td>synthetic construct</td>
+      <td>1170</td>
+      <td>Synthetic construct Homo sapiens clone FLH119406.0</td>
+    </tr>
+    <tr>
+      <td>AP019708.1</td>
+      <td>AP019708</td>
+      <td>Escherichia coli O145:H28</td>
+      <td>5418961</td>
+      <td>Escherichia coli O145:H28 122715 DNA, complete gen</td>
+    </tr>
+    <tr>
+      <td>AP019706.1</td>
+      <td>AP019706</td>
+      <td>Escherichia coli O145:H28</td>
+      <td>5488534</td>
+      <td>Escherichia coli O145:H28 112648 DNA, complete gen</td>
+    </tr>
+    <tr>
+      <td>AP019703.1</td>
+      <td>AP019703</td>
+      <td>Escherichia coli O145:H28</td>
+      <td>5374674</td>
+      <td>Escherichia coli O145:H28 10942 DNA, complete geno</td>
+    </tr>
+    <tr>
+      <td>HG738867.1</td>
+      <td>HG738867</td>
+      <td>Escherichia coli str. K-12 substr. MC4100</td>
+      <td>4527247</td>
+      <td>Escherichia coli str. K-12 substr. MC4100 complete</td>
+    </tr>
+    <tr>
+      <td>LN832404.1</td>
+      <td>LN832404</td>
+      <td>Escherichia coli K-12</td>
+      <td>4638126</td>
+      <td>Escherichia coli K-12 genome assembly EcoliK12AG10</td>
+    </tr>
+    <tr>
+      <td>CP019649.1</td>
+      <td>CP019649</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhimurium var. monophasic 4,5,12:i:-</td>
+      <td>4999862</td>
+      <td>Salmonella enterica subsp. enterica serovar Typhim</td>
+    </tr>
+    <tr>
+      <td>CP026569.1</td>
+      <td>CP026569</td>
+      <td>Salmonella enterica</td>
+      <td>4679649</td>
+      <td>Salmonella enterica strain MFDS1004839 chromosome,</td>
+    </tr>
+    <tr>
+      <td>CP025745.1</td>
+      <td>CP025745</td>
+      <td>Salmonella enterica</td>
+      <td>4742945</td>
+      <td>Salmonella enterica strain MFDS1004024 chromosome,</td>
+    </tr>
+    <tr>
+      <td>LT605205.1</td>
+      <td>LT605205</td>
+      <td>Proteiniphilum saccharofermentans</td>
+      <td>4414963</td>
+      <td>Proteiniphilum saccharofermentans isolate M3/6 gen</td>
+    </tr>
+    <tr>
+      <td>CP013840.1</td>
+      <td>CP013840</td>
+      <td>Streptococcus pyogenes</td>
+      <td>1741348</td>
+      <td>Streptococcus pyogenes strain MGAS27061, complete</td>
+    </tr>
+    <tr>
+      <td>CP013839.1</td>
+      <td>CP013839</td>
+      <td>Streptococcus pyogenes</td>
+      <td>1709394</td>
+      <td>Streptococcus pyogenes strain MGAS23530, complete</td>
+    </tr>
+    <tr>
+      <td>CP013838.1</td>
+      <td>CP013838</td>
+      <td>Streptococcus pyogenes</td>
+      <td>1786874</td>
+      <td>Streptococcus pyogenes strain MGAS11027, complete</td>
+    </tr>
+    <tr>
+      <td>AJ749949.2</td>
+      <td>AJ749949</td>
+      <td>Francisella tularensis subsp. tularensis SCHU S4</td>
+      <td>1892775</td>
+      <td>Francisella tularensis subsp. tularensis SCHU S4 c</td>
+    </tr>
+    <tr>
+      <td>AM286280.1</td>
+      <td>AM286280</td>
+      <td>Francisella tularensis subsp. tularensis FSC198</td>
+      <td>1892616</td>
+      <td>Francisella tularensis subsp. tularensis strain FS</td>
+    </tr>
+    <tr>
+      <td>CP003121.1</td>
+      <td>CP003121</td>
+      <td>Streptococcus pyogenes MGAS1882</td>
+      <td>1781029</td>
+      <td>Streptococcus pyogenes MGAS1882, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP003116.1</td>
+      <td>CP003116</td>
+      <td>Streptococcus pyogenes MGAS15252</td>
+      <td>1750832</td>
+      <td>Streptococcus pyogenes MGAS15252, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010867.1</td>
+      <td>CP010867</td>
+      <td>Streptococcus agalactiae</td>
+      <td>2092071</td>
+      <td>Streptococcus agalactiae strain SS1, complete geno</td>
+    </tr>
+    <tr>
+      <td>K01197.1</td>
+      <td>ECOTGY1</td>
+      <td>Escherichia coli</td>
+      <td>1949</td>
+      <td>E.coli tyrT locus containing two Tyr-tRNA-1 genes</td>
+    </tr>
+    <tr>
+      <td>J01611.1</td>
+      <td>ECOAMPCFR</td>
+      <td>Escherichia coli</td>
+      <td>5482</td>
+      <td>E.coli frd operon, fumarate reductase (flavoprotei</td>
+    </tr>
+    <tr>
+      <td>K01992.1</td>
+      <td>ECOPHOS</td>
+      <td>Escherichia coli</td>
+      <td>5032</td>
+      <td>E.coli phosphate-repressible periplasmic phosphate</td>
+    </tr>
+    <tr>
+      <td>L19201.1</td>
+      <td>ECOUW87</td>
+      <td>Escherichia coli str. K-12 substr. MG1655</td>
+      <td>96484</td>
+      <td>E. coli chromosomal region from 87.2 to 89.2 minut</td>
+    </tr>
+    <tr>
+      <td>AH001628.2</td>
+      <td>AH001628</td>
+      <td>Escherichia coli</td>
+      <td>400</td>
+      <td>Escherichia coli E.coli 5S rRNA precursor 10S rRNA</td>
+    </tr>
+    <tr>
+      <td>M87049.1</td>
+      <td>ECOUW85</td>
+      <td>Escherichia coli str. K-12 substr. MG1655</td>
+      <td>91414</td>
+      <td>E. coli genomic sequence of the region from 84.5 t</td>
+    </tr>
+    <tr>
+      <td>X07037.1</td>
+      <td>X07037</td>
+      <td>Escherichia coli</td>
+      <td>1443</td>
+      <td>E. coli insertion element IS150 complete sequence</td>
+    </tr>
+    <tr>
+      <td>CP011124.1</td>
+      <td>CP011124</td>
+      <td>Escherichia coli</td>
+      <td>4502758</td>
+      <td>Escherichia coli strain USML2, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010236.1</td>
+      <td>CP010236</td>
+      <td>Escherichia coli</td>
+      <td>4838808</td>
+      <td>Escherichia coli strain S42, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010235.1</td>
+      <td>CP010235</td>
+      <td>Escherichia coli</td>
+      <td>5399183</td>
+      <td>Escherichia coli strain S40, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010230.1</td>
+      <td>CP010230</td>
+      <td>Escherichia coli</td>
+      <td>4733615</td>
+      <td>Escherichia coli strain S21, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010228.1</td>
+      <td>CP010228</td>
+      <td>Escherichia coli</td>
+      <td>4632368</td>
+      <td>Escherichia coli strain S3, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010200.1</td>
+      <td>CP010200</td>
+      <td>Escherichia coli</td>
+      <td>4821620</td>
+      <td>Escherichia coli strain M10, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010191.1</td>
+      <td>CP010191</td>
+      <td>Escherichia coli</td>
+      <td>4803944</td>
+      <td>Escherichia coli strain M8, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010177.1</td>
+      <td>CP010177</td>
+      <td>Escherichia coli</td>
+      <td>4735489</td>
+      <td>Escherichia coli strain H14, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010176.1</td>
+      <td>CP010176</td>
+      <td>Escherichia coli</td>
+      <td>4805164</td>
+      <td>Escherichia coli strain H10, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010171.1</td>
+      <td>CP010171</td>
+      <td>Escherichia coli</td>
+      <td>4807161</td>
+      <td>Escherichia coli strain H7, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010152.1</td>
+      <td>CP010152</td>
+      <td>Escherichia coli</td>
+      <td>4637555</td>
+      <td>Escherichia coli strain D9, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010143.1</td>
+      <td>CP010143</td>
+      <td>Escherichia coli</td>
+      <td>4821305</td>
+      <td>Escherichia coli strain D4, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010117.1</td>
+      <td>CP010117</td>
+      <td>Escherichia coli</td>
+      <td>4809836</td>
+      <td>Escherichia coli strain C2, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP012127.1</td>
+      <td>CP012127</td>
+      <td>Escherichia coli</td>
+      <td>4609522</td>
+      <td>Escherichia coli strain DH1Ec169, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP012126.1</td>
+      <td>CP012126</td>
+      <td>Escherichia coli</td>
+      <td>4612363</td>
+      <td>Escherichia coli strain DH1Ec104, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP012125.1</td>
+      <td>CP012125</td>
+      <td>Escherichia coli</td>
+      <td>4614223</td>
+      <td>Escherichia coli strain DH1Ec095, complete genome</td>
+    </tr>
+    <tr>
+      <td>K01789.1</td>
+      <td>ECOORIC</td>
+      <td>Escherichia coli</td>
+      <td>422</td>
+      <td>E.coli K12 origin of replication</td>
+    </tr>
+    <tr>
+      <td>X06663.1</td>
+      <td>X06663</td>
+      <td>Escherichia coli K-12</td>
+      <td>981</td>
+      <td>E. coli malG gene 3'-flanking DNA</td>
+    </tr>
+    <tr>
+      <td>5AFI_x</td>
+      <td>5AFI_x</td>
+      <td>Escherichia coli</td>
+      <td>11</td>
+      <td>Chain x, 2.9A Structure of E. coli ribosome-EF-TU</td>
+    </tr>
+    <tr>
+      <td>6RKV_H</td>
+      <td>6RKV_H</td>
+      <td>Escherichia coli K-12</td>
+      <td>18</td>
+      <td>Chain H, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKV_G</td>
+      <td>6RKV_G</td>
+      <td>Escherichia coli K-12</td>
+      <td>18</td>
+      <td>Chain G, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKV_E</td>
+      <td>6RKV_E</td>
+      <td>Escherichia coli K-12</td>
+      <td>14</td>
+      <td>Chain E, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKV_F</td>
+      <td>6RKV_F</td>
+      <td>Escherichia coli K-12</td>
+      <td>14</td>
+      <td>Chain F, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKU_H</td>
+      <td>6RKU_H</td>
+      <td>Escherichia coli</td>
+      <td>18</td>
+      <td>Chain H, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKU_G</td>
+      <td>6RKU_G</td>
+      <td>Escherichia coli</td>
+      <td>18</td>
+      <td>Chain G, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKU_E</td>
+      <td>6RKU_E</td>
+      <td>Escherichia coli</td>
+      <td>14</td>
+      <td>Chain E, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKU_F</td>
+      <td>6RKU_F</td>
+      <td>Escherichia coli</td>
+      <td>14</td>
+      <td>Chain F, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKS_H</td>
+      <td>6RKS_H</td>
+      <td>Escherichia coli</td>
+      <td>18</td>
+      <td>Chain H, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKS_G</td>
+      <td>6RKS_G</td>
+      <td>Escherichia coli</td>
+      <td>18</td>
+      <td>Chain G, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKS_E</td>
+      <td>6RKS_E</td>
+      <td>Escherichia coli</td>
+      <td>14</td>
+      <td>Chain E, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>6RKS_F</td>
+      <td>6RKS_F</td>
+      <td>Escherichia coli</td>
+      <td>14</td>
+      <td>Chain F, E. coli DNA Gyrase - DNA binding and clea</td>
+    </tr>
+    <tr>
+      <td>CP014642.1</td>
+      <td>CP014642</td>
+      <td>Escherichia coli</td>
+      <td>4165783</td>
+      <td>Escherichia coli strain BLK16 chromosome, complete</td>
+    </tr>
+    <tr>
+      <td>CP014641.1</td>
+      <td>CP014641</td>
+      <td>Escherichia coli</td>
+      <td>4165587</td>
+      <td>Escherichia coli strain BLK9, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP014268.2</td>
+      <td>CP014268</td>
+      <td>Escherichia coli B</td>
+      <td>4478958</td>
+      <td>Escherichia coli B strain C2566, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP014269.1</td>
+      <td>CP014269</td>
+      <td>Escherichia coli B</td>
+      <td>4569185</td>
+      <td>Escherichia coli B strain C3029, complete genome</td>
+    </tr>
+    <tr>
+      <td>M10313.1</td>
+      <td>ECOILVGE</td>
+      <td>Escherichia coli</td>
+      <td>9456</td>
+      <td>E.coli ilv gene cluster encoding ilvD and ilvA pep</td>
+    </tr>
+    <tr>
+      <td>9SLZ_T</td>
+      <td>9SLZ_T</td>
+      <td>Escherichia coli</td>
+      <td>77</td>
+      <td>Chain T, Wild-type E. coli tRNALys</td>
+    </tr>
+    <tr>
+      <td>NZ_FBYD01000004.1</td>
+      <td>NZ_FBYD01000004</td>
+      <td>Escherichia coli</td>
+      <td>5082442</td>
+      <td>Escherichia coli isolate E. coli ErtS, whole genom</td>
+    </tr>
+    <tr>
+      <td>J01648.1</td>
+      <td>ECOMALB</td>
+      <td>Escherichia coli</td>
+      <td>6545</td>
+      <td>E.coli malB region promoter, malK-lamB and malEFG</td>
+    </tr>
+    <tr>
+      <td>J05516.1</td>
+      <td>ECOLIVHMGF</td>
+      <td>Escherichia coli str. K-12 substr. W3110</td>
+      <td>8703</td>
+      <td>E.coli leucine-specific transport (LS-BP; LIV-BP)</td>
+    </tr>
+    <tr>
+      <td>LR963135.1</td>
+      <td>LR963135</td>
+      <td>Aeromonas hydrophila</td>
+      <td>4957285</td>
+      <td>Aeromonas hydrophila strain vAh ST251 genome assem</td>
+    </tr>
+    <tr>
+      <td>LR963132.1</td>
+      <td>LR963132</td>
+      <td>Aeromonas hydrophila</td>
+      <td>4946110</td>
+      <td>Aeromonas hydrophila strain vAh ST251 genome assem</td>
+    </tr>
+    <tr>
+      <td>LR963129.1</td>
+      <td>LR963129</td>
+      <td>Aeromonas hydrophila</td>
+      <td>4946634</td>
+      <td>Aeromonas hydrophila strain vAh ST251 genome assem</td>
+    </tr>
+    <tr>
+      <td>LR963127.1</td>
+      <td>LR963127</td>
+      <td>Aeromonas hydrophila</td>
+      <td>4945396</td>
+      <td>Aeromonas hydrophila strain vAh ST251 genome assem</td>
+    </tr>
+    <tr>
+      <td>CP013952.1</td>
+      <td>CP013952</td>
+      <td>Escherichia coli</td>
+      <td>4567242</td>
+      <td>Escherichia coli strain HST04, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010221.1</td>
+      <td>CP010221</td>
+      <td>Escherichia coli</td>
+      <td>5102172</td>
+      <td>Escherichia coli strain M19, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010219.1</td>
+      <td>CP010219</td>
+      <td>Escherichia coli</td>
+      <td>5102554</td>
+      <td>Escherichia coli strain M18, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010213.1</td>
+      <td>CP010213</td>
+      <td>Escherichia coli</td>
+      <td>5103562</td>
+      <td>Escherichia coli strain M15, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010206.1</td>
+      <td>CP010206</td>
+      <td>Escherichia coli</td>
+      <td>5032791</td>
+      <td>Escherichia coli strain M11, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010196.1</td>
+      <td>CP010196</td>
+      <td>Escherichia coli</td>
+      <td>5145749</td>
+      <td>Escherichia coli strain M9, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010186.1</td>
+      <td>CP010186</td>
+      <td>Escherichia coli</td>
+      <td>5146228</td>
+      <td>Escherichia coli strain M6, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010183.1</td>
+      <td>CP010183</td>
+      <td>Escherichia coli</td>
+      <td>4940434</td>
+      <td>Escherichia coli strain M3, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010180.1</td>
+      <td>CP010180</td>
+      <td>Escherichia coli</td>
+      <td>4941156</td>
+      <td>Escherichia coli strain M1, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010163.1</td>
+      <td>CP010163</td>
+      <td>Escherichia coli</td>
+      <td>4531885</td>
+      <td>Escherichia coli strain H2, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010160.1</td>
+      <td>CP010160</td>
+      <td>Escherichia coli</td>
+      <td>4818512</td>
+      <td>Escherichia coli strain H1, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010140.1</td>
+      <td>CP010140</td>
+      <td>Escherichia coli</td>
+      <td>4971154</td>
+      <td>Escherichia coli strain D3, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP014348.1</td>
+      <td>CP014348</td>
+      <td>Escherichia coli str. K-12 substr. MG1655</td>
+      <td>4657541</td>
+      <td>Escherichia coli str. K-12 substr. MG1655 strain J</td>
+    </tr>
+    <tr>
+      <td>AH001629.2</td>
+      <td>AH001629</td>
+      <td>Escherichia coli</td>
+      <td>760</td>
+      <td>Escherichia coli E.coli T1 ribonuclease sensitive</td>
+    </tr>
+    <tr>
+      <td>AH000885.2</td>
+      <td>AH000885</td>
+      <td>Escherichia coli</td>
+      <td>345</td>
+      <td>Escherichia coli E.coli galT gene/insertion elemen</td>
+    </tr>
+    <tr>
+      <td>LRDE01000001.1</td>
+      <td>LRDE01000001</td>
+      <td>Escherichia coli</td>
+      <td>4668981</td>
+      <td>Escherichia coli strain DV133T unitig_0, whole gen</td>
+    </tr>
+    <tr>
+      <td>LRDF01000001.1</td>
+      <td>LRDF01000001</td>
+      <td>Escherichia coli</td>
+      <td>4660490</td>
+      <td>Escherichia coli strain DV159 unitig_0, whole geno</td>
+    </tr>
+    <tr>
+      <td>CP014225.1</td>
+      <td>CP014225</td>
+      <td>Escherichia coli str. K-12 substr. MG1655</td>
+      <td>4659625</td>
+      <td>Escherichia coli str. K-12 substr. MG1655, complet</td>
+    </tr>
+    <tr>
+      <td>CP011495.1</td>
+      <td>CP011495</td>
+      <td>Escherichia coli</td>
+      <td>4678046</td>
+      <td>Escherichia coli strain NCM3722, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP011018.1</td>
+      <td>CP011018</td>
+      <td>Escherichia coli</td>
+      <td>4885378</td>
+      <td>Escherichia coli strain CI5, complete genome</td>
+    </tr>
+    <tr>
+      <td>CP010445.1</td>
+      <td>CP010445</td>
+      <td>Escherichia coli K-12</td>
+      <td>4682086</td>
+      <td>Escherichia coli K-12 strain ER3435, complete geno</td>
+    </tr>
+    <tr>
+      <td>CP010444.1</td>
+      <td>CP010444</td>
+      <td>Escherichia coli K-12</td>
+      <td>4609629</td>
+      <td>Escherichia coli K-12 strain ER3475, complete geno</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#seqTable').DataTable({
+                    "pageLength": 25,
+                    "scrollX": true,
+                    "order": [[4, "desc"]]
+                });
+            });
+        </script>
+    </body>
+    </html>
+    
